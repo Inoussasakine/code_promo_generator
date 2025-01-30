@@ -1,5 +1,3 @@
-      - name: Activer le niveau de log 2
-        run: echo 'log_level = 2' >> buildozer.spec
 name: Build APK with Buildozer
 
 on:
