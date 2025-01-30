@@ -32,12 +32,13 @@ jobs:
       - name: 🚀 Compiler l’APK avec un log détaillé
         run: buildozer -v android debug || (cat .buildozer/android/platform/build.log && exit 1)
 
-      - name: 📤 Upload des logs en cas d'échec
+      - name: 📤 Afficher les logs en cas d'échec
         if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: Buildozer-Logs
-          path: .buildozer/android/platform/build.log
+        run: |
+          echo "==== Contenu du dossier .buildozer/android/platform/ ===="
+          ls -la .buildozer/android/platform/
+          echo "==== Contenu du dossier bin/ ===="
+          ls -la bin/
 
       - name: 📤 Upload de l’APK dans les artefacts
         uses: actions/upload-artifact@v4
