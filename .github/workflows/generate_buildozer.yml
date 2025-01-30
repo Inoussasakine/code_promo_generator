@@ -1,0 +1,28 @@
+name: Generate Buildozer Spec
+on: [push]
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install Buildozer
+        run: pip install buildozer
+
+      - name: Generate buildozer.spec
+        run: buildozer init
+
+      - name: Commit buildozer.spec
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add buildozer.spec
+          git commit -m "Génération automatique de buildozer.spec"
+          git push origin main
