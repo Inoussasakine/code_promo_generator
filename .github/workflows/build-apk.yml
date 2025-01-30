@@ -1,3 +1,5 @@
+      - name: Activer le niveau de log 2
+        run: echo 'log_level = 2' >> buildozer.spec
 name: Build APK with Buildozer
 
 on:
@@ -27,9 +29,17 @@ jobs:
           sed -i 's/# android.accept_sdk_license = False/android.accept_sdk_license = True/g' buildozer.spec
           sed -i 's/# requirements = python3/requirements = python3, kivy, kivymd/g' buildozer.spec
           sed -i 's/# (list) Application source files to exclude from packaging/exclude_source_files = *.pyc, *.pyo, .git, __pycache__/g' buildozer.spec
+          echo 'log_level = 2' >> buildozer.spec  # Active le niveau de log 2
 
-      - name: 🚀 Compiler l’APK
-        run: buildozer -v android debug
+      - name: 🚀 Compiler l’APK avec un log détaillé
+        run: buildozer -v android debug || (cat .buildozer/android/platform/build.log && exit 1)
+
+      - name: 📤 Upload des logs en cas d'échec
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Buildozer-Logs
+          path: .buildozer/android/platform/build.log
 
       - name: 📤 Upload de l’APK dans les artefacts
         uses: actions/upload-artifact@v4
