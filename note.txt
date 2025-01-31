@@ -1,0 +1,98 @@
+Application de GESTION DE CODES PROMO
+Auteur : Sakine INOUSSA @Inoussasakine © tout droit réservé
+Github :
+    profil - https://github.com/Inoussasakine
+    lien app : https://github.com/Inoussasakine/code_promo_generator
+
+##############################################################################
+
+📌 Liste Complète des Fonctionnalités de Ton Application "Code Promo Generator"
+
+Voici toutes les fonctionnalités de ton application détaillées, classées par catégories :
+
+🔹 1. Interface Principale (Menu)
+Lorsque l’application démarre, l’utilisateur accède à un menu principal avec deux options :
+
+Générateur de Codes Promo → Pour créer des codes promo.
+Manager de Codes Promo → Pour gérer et rechercher les codes générés.
+📌 Chaque écran a un bouton "Retour au Menu" pour revenir au menu principal.
+
+🔹 2. Générateur de Codes Promo
+✅ Génération de Codes Promo
+L’utilisateur peut générer des codes promo en entrant :
+
+Nombre de codes à générer.
+Longueur des codes (nombre de caractères).
+Préfixe du code (ex : "PROMO", "OFFRE", etc.).
+📌 Les codes sont affichés dans une liste après génération.
+
+✅ Génération d'Images avec le Code Promo
+Chaque code promo est converti en image.
+Le code est centré dans un rectangle blanc arrondi.
+Texte noir, en gras, et bien lisible.
+Possibilité d’ajouter une image de fond pour les images des codes promo.
+📌 Les images sont stockées dans le dossier images/ et sont réutilisables.
+
+✅ Exportation des Codes Promo
+L’utilisateur peut :
+
+Exporter tous les codes générés dans un PDF structuré.
+Exporter toutes les images des codes promo dans un PDF (4 images par page, redimensionnées proportionnellement).
+📌 Les fichiers PDF sont stockés dans le dossier pdfs/.
+
+🔹 3. Manager de Codes Promo
+✅ Affichage et Recherche des Codes
+Affichage de tous les codes générés avec leur statut.
+Recherche en temps réel d’un code promo en tapant dans un champ de recherche.
+📌 Les résultats s'affichent immédiatement dans la liste.
+
+✅ Statut des Codes Promo
+Chaque code peut avoir deux statuts :
+
+Libre → 🟢 Affiché en vert.
+Utilisé → 🔴 Affiché en rouge.
+📌 L’utilisateur peut cliquer sur un code pour changer son statut.
+
+🔹 4. Exportation et Signature
+✅ Exportation en PDF avec Tableau
+Génération d’un PDF contenant tous les codes sous forme de tableau.
+Colonnes :
+N° (Numéro du code)
+Code Promo
+Bénéficiaire (modifiable après export)
+Date (date de génération)
+📌 Le PDF a un titre "Liste des Codes Promo du (Date du Jour)".
+
+✅ Exportation des Images en PDF
+Toutes les images des codes promo sont insérées dans un PDF.
+4 images par page, bien redimensionnées pour garantir la lisibilité.
+📌 Chaque image est proportionnellement ajustée pour être bien lisible.
+
+✅ Ajout d'un Logo dans les PDFs
+Un logo peut être ajouté en haut des PDFs.
+Le logo s’affiche avant le titre du PDF.
+📌 Si logo.png est présent dans le dossier, il est automatiquement inséré.
+
+📌 🏆 Résumé des Fonctionnalités
+1️⃣ Générateur de Codes Promo
+✅ Génération de codes aléatoires avec options.
+✅ Création d’images avec design propre.
+✅ Export en PDF des codes sous forme de tableau.
+✅ Export en PDF des images (4 images/page).
+
+2️⃣ Manager de Codes Promo
+✅ Affichage et recherche de codes générés.
+✅ Changement du statut des codes (🟢 Libre, 🔴 Utilisé).
+
+3️⃣ Signature et Publication (A venir)
+✅ Signature de l’application avec .keystore.
+✅ Génération automatique d’un .apk et .aab pour Android.
+✅ Ajout des informations du développeur.
+
+📌 🚀 Fonctionnalités Futuristes
+Si tu veux améliorer encore plus ton application, voici quelques idées :
+
+Ajout d’une base de données (SQLite) pour stocker les codes de façon permanente.
+Ajout d’une interface mobile (KivyMD) pour rendre l’application plus belle sur Android.
+Ajout d’un QR Code dans chaque image pour faciliter l’utilisation des codes promo.
+Ajout d’un système de validation automatique des codes promo utilisés.

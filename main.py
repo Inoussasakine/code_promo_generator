@@ -6,9 +6,12 @@ import pyperclip
 from PIL import Image, ImageDraw, ImageFont
 import os
 from fpdf import FPDF
+from datetime import datetime
 
 # Variable pour stocker l'image de fond
 image_fond_path = None
+# 📌 Met le chemin du logo ici
+LOGO_PATH = "logo.png"  # Assure-toi que l'image est bien dans le dossier du projet
 
 # Fenêtre principale
 root = tk.Tk()
@@ -34,6 +37,7 @@ def afficher_menu():
 
 ### === GÉNÉRATEUR DE CODES PROMO === ###
 def afficher_generateur():
+    global liste_codes  # Rendre liste_codes accessible à toute la fenêtre
     for widget in contenu_frame.winfo_children():
         widget.destroy()
 
@@ -84,7 +88,7 @@ def afficher_generateur():
         try:
             img = Image.open(image_fond_path)
             draw = ImageDraw.Draw(img)
-            font = ImageFont.truetype("arial.ttf", 40)
+            font = ImageFont.truetype("arialbd.ttf", 60) #Modifier la taille du texte code sur image VRAI
 
             img_width, img_height = img.size
             bbox = draw.textbbox((0, 0), code, font=font)
@@ -133,36 +137,157 @@ def afficher_generateur():
     btn_export_pdf = tk.Button(contenu_frame, text="Exporter en PDF", command=exporter_pdf)
     btn_export_pdf.pack(pady=5)
 
+    # Ajout bouton pour exporter images en pdf
+    btn_export_images_pdf = tk.Button(contenu_frame, text="Exporter Images en PDF", command=exporter_images_pdf)
+    btn_export_images_pdf.pack(pady=5)
 
     btn_retour = tk.Button(contenu_frame, text="Retour au menu", command=afficher_menu)
     btn_retour.pack(pady=10)
 
+
+
 ### === pdf === ###
 def exporter_pdf():
-    """Générer un PDF avec tous les codes promo générés"""
-    codes = liste_codes.get(0, tk.END)
-    if not codes:
-        messagebox.showwarning("Erreur", "Aucun code généré.")
-        return
-    
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial", size=12)
-    pdf.cell(200, 10, txt="Liste des Codes Promo", ln=True, align='C')
-    pdf.ln(10)
+    """Génère un PDF avec un tableau contenant les codes promo, numérotation, bénéficiaire et date"""
+    global liste_codes  # Récupérer la variable globale
 
-    for code in codes:
-        pdf.cell(200, 10, txt=code, ln=True, align='L')
+    try:
+        codes = liste_codes.get(0, tk.END)  # Récupérer tous les codes
+        # 📌 Récupérer la date actuelle
+        date_aujourd_hui = datetime.today().strftime("%d/%m/%Y")
 
-    if not os.path.exists("pdfs"):
-        os.makedirs("pdfs")
-    pdf.output("pdfs/codes_promo.pdf")
+        if not codes:
+            messagebox.showwarning("Erreur", "Aucun code à exporter.")
+            return
 
-    messagebox.showinfo("PDF Exporté", "Liste des codes enregistrée en PDF.")
+        pdf = FPDF(orientation="P", unit="mm", format="A4")
+        pdf.set_auto_page_break(auto=True, margin=15)
+        pdf.add_page()
 
+        # 📌 Ajouter le logo (si le fichier existe)
+        if os.path.exists(LOGO_PATH):
+            pdf.image(LOGO_PATH, x=10, y=5, w=30)  # Position (x, y) et largeur (w
+
+        # 📌 Titre du document
+        pdf.set_font("Arial", "B", 16)
+        pdf.cell(200, 10, f"Liste des Codes Promo du {date_aujourd_hui}", ln=True, align='C')
+        pdf.ln(10)
+
+        # 📌 Définition du tableau
+        pdf.set_font("Arial", "B", 12)
+        pdf.cell(10, 10, "N°", border=1, align="C")  # Numérotation
+        pdf.cell(70, 10, "Code Promo", border=1, align="C")  # Code
+        pdf.cell(70, 10, "Bénéficiaire", border=1, align="C")  # Bénéficiaire
+        pdf.cell(40, 10, "Date", border=1, align="C")  # Date
+        pdf.ln()
+
+        # 📌 Remplir le tableau avec les données
+        pdf.set_font("Arial", size=11)
+
+        for i, code in enumerate(codes, start=1):
+            pdf.cell(10, 10, str(i), border=1, align="C")  # Numérotation
+            pdf.cell(70, 10, code, border=1, align="C")  # Code promo
+            pdf.cell(70, 10, "", border=1, align="C")  # Bénéficiaire par défaut
+            pdf.cell(40, 10, "", border=1, align="C")  # Date actuelle
+            pdf.ln()
+
+        # 📌 Créer le dossier "pdfs" s'il n'existe pas
+        if not os.path.exists("pdfs"):
+            os.makedirs("pdfs")
+
+        pdf_path = "pdfs/codes_promo.pdf"
+        pdf.output(pdf_path)
+
+        messagebox.showinfo("PDF Exporté", f"Liste des codes enregistrée en PDF :\n{pdf_path}")
+    except Exception as e:
+        messagebox.showerror("Erreur", f"Impossible d'exporter en PDF : {e}")
+
+# === Exporter images pdf ===
+def exporter_images_pdf():
+    """Génère un PDF contenant 4 images des codes promo par page avec un redimensionnement proportionnel"""
+    global liste_codes  # Récupérer la variable globale
+
+    try:
+        codes = liste_codes.get(0, tk.END)  # Récupérer tous les codes
+
+        if not codes:
+            messagebox.showwarning("Erreur", "Aucune image à exporter.")
+            return
+
+        pdf = FPDF(orientation="P", unit="mm", format="A4")
+        pdf.set_auto_page_break(auto=True, margin=10)
+        pdf.add_page()
+
+        # 📌 Récupérer la date actuelle
+        date_aujourd_hui = datetime.today().strftime("%d/%m/%Y")
+
+        # 📌 Ajouter le titre avec la date du jour
+        pdf.set_font("Arial", "B", 16)
+        pdf.cell(200, 10, f"Images des Codes Promo du {date_aujourd_hui}", ln=True, align='C')
+        pdf.ln(10)
+
+        # 📌 Position et taille des images
+        x_start = 15
+        y_start = 40
+        page_width = 210  # Largeur totale A4 en mm
+        page_height = 297  # Hauteur totale A4 en mm
+        max_width = 85  # Largeur max d'une image (ajusté pour 2 images par ligne)
+        max_height = 85  # Hauteur max d'une image (ajusté pour 2 lignes)
+
+        images_per_row = 2  # 2 images par ligne
+        images_per_page = 4  # 4 images par page (2 lignes de 2 images)
+
+        count = 0
+        img_found = False
+
+        for code in codes:
+            img_path = f"images/{code}.png"
+            if os.path.exists(img_path):
+                # 📌 Redimensionner l'image proportionnellement
+                with Image.open(img_path) as img:
+                    img_w, img_h = img.size
+                    ratio = min(max_width / img_w, max_height / img_h)
+                    new_w = int(img_w * ratio)
+                    new_h = int(img_h * ratio)
+
+                row = count // images_per_row  # Ligne actuelle (0 ou 1)
+                col = count % images_per_row  # Colonne actuelle (0 ou 1)
+
+                x = x_start + (col * (max_width + 10))  # Position X
+                y = y_start + (row * (max_height + 10))  # Position Y
+
+                pdf.image(img_path, x=x, y=y, w=new_w, h=new_h)
+
+                count += 1
+                img_found = True
+
+                if count >= images_per_page:  # Si 4 images sont placées, passer à la page suivante
+                    pdf.add_page()
+                    count = 0  # Réinitialiser le compteur pour la nouvelle page
+                    y_start = 40  # Réinitialiser la position Y
+
+            else:
+                print(f"Image non trouvée pour : {code}")
+
+        if not img_found:
+            messagebox.showwarning("Erreur", "Aucune image trouvée pour les codes générés.")
+            return
+
+        # 📌 Créer le dossier "pdfs" s'il n'existe pas
+        if not os.path.exists("pdfs"):
+            os.makedirs("pdfs")
+
+        pdf_path = f"pdfs/images_codes_promo_{date_aujourd_hui.replace('/', '-')}.pdf"
+        pdf.output(pdf_path)
+
+        messagebox.showinfo("PDF Exporté", f"PDF contenant les images enregistré :\n{pdf_path}")
+    except Exception as e:
+        messagebox.showerror("Erreur", f"Impossible d'exporter les images en PDF : {e}")
+        
 # Ajout du bouton pour exporter en PDF
 btn_export_pdf = tk.Button(contenu_frame, text="Exporter en PDF", command=exporter_pdf)
 btn_export_pdf.pack(pady=5)
+
 
 
 

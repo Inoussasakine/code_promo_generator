@@ -6,6 +6,7 @@ import pyperclip
 from PIL import Image, ImageDraw, ImageFont
 import os
 from fpdf import FPDF
+from datetime import datetime
 
 # Variable globale pour stocker l'image de fond
 image_fond_path = None
@@ -38,9 +39,12 @@ def generer_image():
             img = Image.open(image_fond_path)
             draw = ImageDraw.Draw(img)
 
+            # 📌 Définir une police plus grande et en gras
+            font_size = 200  # Augmenter la taille de la police
+
             # Charger la police (Arial ou police par défaut)
             try:
-                font = ImageFont.truetype("arial.ttf", 40)  # Arial taille 40
+                font = ImageFont.truetype("arialbd.ttf", font_size)  # Arial en gras
             except IOError:
                 font = ImageFont.load_default()
 
@@ -53,14 +57,14 @@ def generer_image():
             text_height = bbox[3] - bbox[1]
 
             # Déterminer la position du rectangle
-            rect_padding = 20  # Marge autour du texte
+            rect_padding = 40  # Marge autour du texte
             rect_x1 = (img_width - text_width - rect_padding) // 2
             rect_y1 = (img_height - text_height - rect_padding) // 2
             rect_x2 = rect_x1 + text_width + rect_padding
             rect_y2 = rect_y1 + text_height + rect_padding
 
             # Dessiner un rectangle arrondi blanc
-            draw.rounded_rectangle([rect_x1, rect_y1, rect_x2, rect_y2], radius=15, fill="white")
+            draw.rounded_rectangle([rect_x1, rect_y1, rect_x2, rect_y2], radius=25, fill="white")
 
             # Positionner le texte centré
             text_x = (img_width - text_width) // 2
@@ -92,6 +96,8 @@ def generer_pdf():
     pdf.set_font("Arial", size=12)
 
     pdf.cell(200, 10, txt="Liste des Codes Promo", ln=True, align='C')
+    pdf.ln(10)
+    pdf.cell(200, 10, txt="cODES                                           BENEFICIARE                                                 DATE", ln=True, align='C')
     pdf.ln(10)
 
     for code in codes:
